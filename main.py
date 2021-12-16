@@ -28,10 +28,14 @@ def get_prices(client):
 if __name__ == '__main__':
     client = Spot()
 
-    df = get_prices(client)
+    print("Running...")
+    while True:
 
-    G = nx.from_pandas_edgelist(df, "base", "quote", ["price"], create_using=nx.DiGraph())
+        df = get_prices(client)
 
-    nx.draw(G, with_labels=True, font_weight='bold')
+        G = nx.from_pandas_edgelist(df, "base", "quote", ["price"], create_using=nx.DiGraph())
 
-    plt.show()
+        nx.draw(G, with_labels=True, font_weight='bold')
+
+        if nx.negative_edge_cycle(G):
+            print("You win")
