@@ -1,4 +1,4 @@
-from binance.spot import Spot
+from binance import Client
 import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -9,13 +9,13 @@ from functools import lru_cache
 
 @lru_cache(None)
 def get_symbol_sets(client):
-    return {d['symbol']: (d['baseAsset'], d['quoteAsset']) for d in client.exchange_info()['symbols']}
+    return {d['symbol']: (d['baseAsset'], d['quoteAsset']) for d in client.get_exchange_info()['symbols']}
 
 
 def get_prices(client):
     symbols = get_symbol_sets(client)
 
-    df = pd.DataFrame(data=client.ticker_price())
+    df = pd.DataFrame(data=client.get_all_tickers())
 
     df['base'] = df.symbol.map({key: val[0] for key, val in symbols.items()})
     df['quote'] = df.symbol.map({key: val[1] for key, val in symbols.items()})
@@ -26,7 +26,7 @@ def get_prices(client):
 
 
 if __name__ == '__main__':
-    client = Spot()
+    client = Client()
 
     print("Running...")
     while True:
